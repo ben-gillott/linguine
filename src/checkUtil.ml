@@ -137,7 +137,7 @@ let bind_typ (cx : contexts) (id : string) (ml : modification list) (t : typ) : 
   bind cx id (Gamma ((has_modification cx ml Canon), t))
 
 let get_ml_pm (cx : contexts) (ml : modification list) : parameterization =
-  let get_ml_pm_rec (pm : parameterization) (m : modification) =
+  let get_ml_pm_rec (m : modification) (pm : parameterization) =
     match m with
     | With (t, sl) -> 
       let fail s = error cx ("Duplicate parameterization assignments to variable " ^ s) in
@@ -145,7 +145,7 @@ let get_ml_pm (cx : contexts) (ml : modification list) : parameterization =
         else Assoc.update s t acc) sl pm
     | _ -> pm
   in
-  List.fold_left get_ml_pm_rec (Assoc.empty) ml
+  List.fold_right get_ml_pm_rec ml (Assoc.empty)
 
 let option_clean (x : 'a option) : 'a =
   match x with | Some x -> x | None -> failwith "Failed option assumption"

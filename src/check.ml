@@ -459,14 +459,14 @@ let update_psi (cx: contexts) (f : fn_typ) : contexts =
 (* Type check parameter; check parameter typ validity *)
 (* Returns gamma *)
 let check_param (cx: contexts) (ml, t, id: modification list * typ * string) : contexts = 
-    debug_print ">> check_param";
+    debug_print (">> check_param " ^ string_of_param (ml, t, id));
     check_typ_valid cx t;
     bind_typ cx id ml t
     
 (* Get list of parameters from param list *)
 (* Returns gamma *)
 let check_params (cx: contexts) (pl : params) : contexts * TypedAst.params = 
-    debug_print ">> check_params";
+    debug_print (">> check_params " ^ (string_of_list string_of_param pl));
     let cx' = List.fold_left check_param cx pl in 
     let p = (List.map (fun (ml, t, x) -> typ_erase cx t, x) pl) in 
     cx', p
@@ -839,8 +839,8 @@ contexts * (TypedAst.params * TypedAst.parameterization) option =
     debug_print (">> check_fn_decl : " ^ id ^ string_of_parameterization pm);
     let cx' = check_parameterization cx pm in
     let cx'',pr = check_params cx' pl in
-    let pme = List.fold_right (fun (s, t) acc -> if is_subtype cx t AnyFrameTyp then acc 
-        else Assoc.update s (typ_erase cx t) acc) (Assoc.bindings pm) Assoc.empty 
+    let pme = List.fold_right (fun (s, t) acc -> if is_subtype cx'' t AnyFrameTyp then acc 
+        else Assoc.update s (typ_erase cx'' t) acc) (Assoc.bindings pm) Assoc.empty 
     in
     if has_modification cx ml External then cx'', None else cx'', Some (pr, pme)
 
