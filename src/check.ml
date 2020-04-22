@@ -357,6 +357,7 @@ let check_fn_inv (cx: contexts) (x : id)
             else None
         in
         match inferred_pml with | None -> None | Some ipml ->
+        print_endline (string_of_list string_of_typ ipml);
         (* Check that the parameterization conforms to the bounds provided *)
         let ipml_clean = List.map (replace_abstype cx.pm) ipml in
         let param_check = match_parameterization_safe (with_pm cx pm) ipml_clean in
